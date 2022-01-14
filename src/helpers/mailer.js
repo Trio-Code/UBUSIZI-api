@@ -2,18 +2,30 @@
 import ejs from 'ejs';
 import path from 'path';
 import nodemailer from 'nodemailer';
+import { google } from 'googleapis';
 import config from '../config';
+
+const oAuth2Client = new google
+  .auth.OAuth2(config.CLIENT_ID, config.CLIENT_SECRET, config.REDIRECT_URI);
+oAuth2Client.setCredentials({ refresh_token: config.REFRESH_TOKEN });
 
 const mailer = async (emailToSend) => {
   try {
-    const transporter = await nodemailer.createTransport({
-      host: config.SMTP_HOST,
-      port: config.SMTP_PORT,
-      auth: {
-        user: config.SMTP_USER,
-        pass: config.SMTP_PASS
+    const accessToken = await oAuth2Client.getAccessToken();
+    const transporter = nodemailer.createTransport(
+      {
+        service: 'gmail',
+        auth: {
+          type: 'OAUTH2',
+          user: 'hdidiersharif@gmail.com',
+          clientId: config.CLIENT_ID,
+          clientSecret: config.CLIENT_SECRET,
+          refreshToken: config.REFRESH_TOKEN,
+          accessToken
+        }
+
       }
-    });
+    );
     let template;
     let subject;
     switch (emailToSend[0]) {
