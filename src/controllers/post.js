@@ -3,10 +3,9 @@ import PostService from '../database/services/post';
 import LikeService from '../database/services/like';
 import CommentService from '../database/services/comment';
 import UserService from '../database/services/user';
-import * as Storage from '../helpers/storage';
+import upload from '../helpers/storage';
 import out from '../helpers/response';
 import { postsIterator, allPostsIterator, recentPostsIterator } from '../helpers/iterators';
-import config from '../config';
 
 class PostController {
   static async addPost(req, res) {
@@ -18,8 +17,8 @@ class PostController {
       }
       if (req.files) {
         const { content } = req.files;
-        const uploadedContent = await Storage.uploadPost(config.POSTS_BUCKET, content);
-        req.body.content = uploadedContent.key;
+        const uploadedContent = await upload(content.tempFilePath);
+        req.body.content = uploadedContent.secure_url;
       }
       req.body.owner = id;
       req.body.createdAt = new Date().getTime();

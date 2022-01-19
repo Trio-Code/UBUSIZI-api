@@ -1,9 +1,8 @@
 /* eslint-disable no-console */
 /* eslint-disable eqeqeq */
 import CategoryService from '../database/services/category';
-import * as Storage from '../helpers/storage';
+import upload from '../helpers/storage';
 import out from '../helpers/response';
-import config from '../config';
 
 class CategoryController {
   static async addCategory(req, res) {
@@ -12,8 +11,9 @@ class CategoryController {
       const { categoryName } = req.body;
       const exist = await CategoryService.findCategory({ categoryName });
       if (exist) return out(res, 409, 'Category already exists', null, 'CONFLICT_ERROR');
-      const uploadedContent = await Storage.uploadImage(config.PROFILE_PICTURES_BUCKET, coverPhoto);
-      req.body.coverPhoto = uploadedContent.key;
+      const uploadedContent = await upload(coverPhoto.tempFilePath);
+      console.log(uploadedContent);
+      req.body.coverPhoto = uploadedContent.secure_url;
       const newCategory = await CategoryService.addCategory(req.body);
       return out(res, 201, 'Category added successfully!', newCategory);
     } catch (error) {

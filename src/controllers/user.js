@@ -6,11 +6,10 @@ import out from '../helpers/response';
 import mailer from '../helpers/mailer';
 import { sign, verify } from '../helpers/jwt';
 import { generate, check } from '../helpers/bcrypt';
-import * as Storage from '../helpers/storage';
+import upload from '../helpers/storage';
 import { userPostsIterator } from '../helpers/iterators';
 import PostService from '../database/services/post';
 import usernamefx from '../helpers/username';
-import config from '../config';
 
 class UserController {
   static async signUp(req, res) {
@@ -198,8 +197,8 @@ class UserController {
       const { id } = req.user;
       if (req.files) {
         const { photo } = req.files;
-        const uploadedPhoto = await Storage.uploadImage(config.PROFILE_PICTURES_BUCKET, photo);
-        req.body.profilePicture = uploadedPhoto.key;
+        const uploadedPhoto = upload(photo.tempFilePath);
+        req.body.profilePicture = uploadedPhoto.secure_url;
       }
       const updatedUser = await UserService.updateUser({ _id: id }, req.body);
       updatedUser.password = undefined;
