@@ -8,6 +8,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 export default async (file) => {
-  const image = await cloudinary.uploader.upload(file, (result) => result);
+  const image = await cloudinary.uploader.upload(file, { resource_type: 'auto' }, (result) => result);
   return image;
 };
