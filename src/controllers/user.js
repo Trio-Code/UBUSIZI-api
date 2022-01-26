@@ -197,7 +197,7 @@ class UserController {
       const { id } = req.user;
       if (req.files) {
         const { photo } = req.files;
-        const uploadedPhoto = upload(photo.tempFilePath);
+        const uploadedPhoto = await upload(photo.tempFilePath);
         req.body.profilePicture = uploadedPhoto.secure_url;
       }
       const updatedUser = await UserService.updateUser({ _id: id }, req.body);
