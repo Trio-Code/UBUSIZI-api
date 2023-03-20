@@ -18,5 +18,6 @@ app.use(bodyParser.json());
 app.use(fileupload({ useTempFiles: true }));
 
 app.use(routes);
+app.get('/', () => 'hello');
 
 export default app;
