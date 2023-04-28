@@ -28,7 +28,7 @@ class UserController {
         email,
         firstname,
         lastname,
-        body: `${process.env.HOST}/user/verify?token=${sign(email)}`
+        body: `${process.env.HOST}/users/verify-account?token=${sign(email)}`
       }, email
       ]);
       if (!emailSent) throw Error('Error sending the email');
